@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import javax.persistence.EntityManager;
@@ -32,6 +31,13 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
+    public User getUsersByName(String name) {
+        return entityManager.createQuery("SELECT u FROM User u where u.name = :name", User.class)
+                .setParameter("name", name)
+                .getSingleResult();
+    }
+
+    @Override
     public void updateUser(User user) {
         User userToBeUpdated = entityManager.find(User.class, user.getId());
         userToBeUpdated.setName(user.getName());
@@ -41,9 +47,7 @@ public class UserDaoImp implements UserDao {
 
     @Override
     public void deleteUser(int id) {
-        User user = new User();
-        user.setId(id);
-        entityManager.remove(user);
+        entityManager.remove(getUserById(id));
         entityManager.flush();
     }
 
