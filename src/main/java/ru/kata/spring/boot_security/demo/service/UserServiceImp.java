@@ -1,6 +1,10 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,27 +14,26 @@ import ru.kata.spring.boot_security.demo.model.User;
 import java.util.List;
 
 @Service
-public class UserServiceImp implements UserService{
+public class UserServiceImp implements UserService, UserDetailsService{
 
     private UserDao userDao;
     private PasswordEncoder passwordEncoder;
-    private RoleService roleService;
 
     @Autowired
-    public UserServiceImp(UserDao userDao, PasswordEncoder passwordEncoder, RoleService roleService) {
+    public UserServiceImp(UserDao userDao,@Lazy PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
-        this.roleService = roleService;
+
     }
 
     @Override
     @Transactional
     public void addUser(User user) {
-        User newUser = new User();
-        newUser.setName(user.getName());
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        newUser.setRoles(user.getRoles());
-        userDao.addUser(newUser);
+        User newUser = userDao.getUsersByName(user.getName());
+        if(newUser == null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userDao.addUser(user);
+        }
     }
 
     @Override
@@ -47,8 +50,8 @@ public class UserServiceImp implements UserService{
 
     @Override
     @Transactional
-    public void updateUser(User user) {
-    userDao.updateUser(user);
+    public void updateUser(int id, User user) {
+    userDao.updateUser(id, user);
     }
 
     @Override
@@ -61,5 +64,14 @@ public class UserServiceImp implements UserService{
     @Transactional(readOnly = true)
     public User getUserName(String name) {
         return userDao.getUsersByName(name);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = getUserName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+        }
+        return user;
     }
 }
