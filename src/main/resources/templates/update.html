@@ -13,19 +13,14 @@
     </p>
     <p>
         <label for="lastName">Enter last name:</label>
-        <input type="text" th:field="*{lastName}" id="lastName">
+        <input type="text" th:field="*{lastname}" id="lastName">
     </p>
     <p>
         <label for="age">Enter age:</label>
         <input type="text" th:field="*{age}" id="age">
     </p>
     <p>
-        <label for="mail">Enter mail:</label>
-        <input type="text" th:field="*{mail}" id="Mail">
-    </p>
-    <p>
-        <label for="pw">Enter new password (if you WANT to CHANGE it) or keep this field blank (if you DON'T WANT to
-            change):</label>
+        <label for="pw">Enter new password</label>
         <input type="password" th:field="*{password}" id="pw" placeholder="password">
     </p>
     Select roles of the user:
@@ -34,7 +29,7 @@
         <label for="user"> User</label>
         <br/>
         <input type="checkbox" id="admin" name="roles" value="2" th:checked="${user.getRoles().contains(roleAdmin)}">
-        <label for="admin"> Administrator</label>
+        <label for="admin"> Admin</label>
     </p>
     <input type="submit" value="Update user"/>
 </form>
