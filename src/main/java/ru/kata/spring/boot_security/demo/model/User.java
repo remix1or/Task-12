@@ -5,6 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 @Entity
@@ -13,14 +15,15 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String name;
     private String lastname;
-    private Byte age;
+    private Integer age;
     private String password;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles",
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
@@ -28,17 +31,18 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String lastname, Byte age) {
+    public User(String name, String lastname, Integer age, Set<Role> roles) {
         this.name = name;
         this.lastname = lastname;
         this.age = age;
+        this.roles = roles;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -58,11 +62,11 @@ public class User implements UserDetails {
         this.lastname = lastname;
     }
 
-    public Byte getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(Byte age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -99,12 +103,12 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return getUserPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return getName();
+        return name;
     }
 
     @Override

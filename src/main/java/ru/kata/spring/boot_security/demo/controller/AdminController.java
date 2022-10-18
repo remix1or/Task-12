@@ -1,11 +1,13 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
+
 
 
 @Controller
@@ -15,6 +17,7 @@ public class AdminController {
     private final UserService userService;
     private final RoleService roleService;
 
+    @Autowired
     public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
@@ -40,27 +43,26 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public String getUserById(@PathVariable(value = "id") int id, Model model) {
+    public String getUserById(@PathVariable(value = "id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         return "user";
     }
 
     @GetMapping("/{id}/update")
-    public String editUser(@PathVariable(value = "id") int id, Model model) {
+    public String editUser(@PathVariable(value = "id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("roles", roleService.getRoles());
         return "update";
     }
 
     @PatchMapping("/{id}")
-    public String updateUser(@ModelAttribute("user") User user,
-                             @PathVariable("id") int id){
-        userService.updateUser(id, user);
+    public String updateUser(@ModelAttribute("user") User user){
+        userService.updateUser(user);
         return "redirect:/admin";
     }
 
     @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable(value = "id") int id) {
+    public String deleteUser(@PathVariable(value = "id") Long id) {
         userService.deleteUser(id);
         return "redirect:/admin";
     }

@@ -37,7 +37,7 @@
     <h4>Assigned roles:</h4>
     <table>
         <tr th:each="role : ${user.getRoles()}">
-            <td th:utext="${#strings.substringAfter(role.getName(), 'ROLE_')}"></td>
+            <td th:utext="${#strings.substringAfter(role.getRoleName(), 'ROLE_')}"></td>
         </tr>
     </table>
     <br/>

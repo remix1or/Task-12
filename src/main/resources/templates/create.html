@@ -9,7 +9,7 @@
 <form th:method="POST" th:action="@{/admin}" th:object="${user}">
     <p>
         <label for="firstName">Enter first name:</label>
-        <input type="text" required th:field="*{username}" id="firstName" placeholder="name">
+        <input type="text" required th:field="*{name}" id="firstName" placeholder="name">
     </p>
     <p>
         <label for="lastName">Enter last name:</label>
@@ -25,9 +25,9 @@
     </p>
     Select roles of the user:
     <p>
-        <input type="checkbox" id="user" name="roles" value="1" checked><label for="user"> User</label>
+        <input type="checkbox" id="user" name="roles" value="ROLE_USER" checked><label for="user"> User</label>
         <br/>
-        <input type="checkbox" id="admin" name="roles" value="2"><label for="admin"> Administrator</label>
+        <input type="checkbox" id="admin" name="roles" value="ROLE_ADMIN"><label for="admin"> Administrator</label>
     </p>
     <input type="submit" value="Save user"/>
 </form>

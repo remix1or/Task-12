@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin main page</title>
+    <title>Admin page</title>
 </head>
 <body>
 <div th:align="center">
@@ -25,7 +25,7 @@
                 <td th:text="${user.getName()}">name</td>
                 <td th:text="${user.getLastname()}">lastName</td>
                 <td th:text="${user.getAge()}">age</td>
-                <td th:text="${user.getRoles()}"></td>
+                <td th:text="${user.getRoles()}">roles</td>
                 <td>
                     <form th:method="GET" th:action="@{/admin/{id}/update(id=${user.getId()})}">
                         <input type="submit" value="Edit"/>

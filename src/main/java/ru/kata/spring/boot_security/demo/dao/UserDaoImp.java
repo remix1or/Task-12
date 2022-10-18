@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.dao;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.User;
 
@@ -13,12 +12,10 @@ public class UserDaoImp implements UserDao {
 
     @PersistenceContext
     private EntityManager entityManager;
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public void addUser(User user) {
         entityManager.persist(user);
-        entityManager.flush();
     }
 
     @Override
@@ -27,7 +24,7 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public User getUserById(int id) {
+    public User getUserById(Long id) {
         return entityManager.find(User.class, id);
     }
 
@@ -39,18 +36,20 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public void updateUser(int id, User user) {
-        User userToBeUpdated = entityManager.find(User.class, id);
-        userToBeUpdated.setName(user.getName());
-        userToBeUpdated.setLastname(user.getLastname());
-        userToBeUpdated.setAge(user.getAge());
-        userToBeUpdated.setPassword(passwordEncoder.encode(user.getPassword()));
+    public void updateUser(User user) {
+        entityManager.merge(user);
     }
 
     @Override
-    public void deleteUser(int id) {
-        entityManager.remove(getUserById(id));
-        entityManager.flush();
+    public void deleteUser(Long id) {
+        try {
+            User user = entityManager.find(User.class, id);
+            if (user != null) {
+                entityManager.remove(user);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("User с указанным вами id не существует!");
+        }
     }
 
 

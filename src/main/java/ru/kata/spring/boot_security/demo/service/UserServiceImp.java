@@ -9,9 +9,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImp implements UserService, UserDetailsService{
@@ -20,20 +22,16 @@ public class UserServiceImp implements UserService, UserDetailsService{
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImp(UserDao userDao,@Lazy PasswordEncoder passwordEncoder) {
+    public UserServiceImp(UserDao userDao, @Lazy PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
-
     }
 
     @Override
     @Transactional
     public void addUser(User user) {
-        User newUser = userDao.getUsersByName(user.getName());
-        if(newUser == null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userDao.addUser(user);
-        }
     }
 
     @Override
@@ -44,19 +42,20 @@ public class UserServiceImp implements UserService, UserDetailsService{
 
     @Override
     @Transactional(readOnly = true)
-    public User getUserById(int id) {
+    public User getUserById(Long id) {
         return userDao.getUserById(id);
     }
 
     @Override
     @Transactional
-    public void updateUser(int id, User user) {
-    userDao.updateUser(id, user);
+    public void updateUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userDao.updateUser(user);
     }
 
     @Override
     @Transactional
-    public void deleteUser(int id) {
+    public void deleteUser(Long id) {
     userDao.deleteUser(id);
     }
 

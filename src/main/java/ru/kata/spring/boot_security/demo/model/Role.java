@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -16,8 +17,7 @@ public class Role implements GrantedAuthority {
     public Role() {
     }
 
-    public Role(Long id, String roleName) {
-        this.id = id;
+    public Role(String roleName) {
         this.roleName = roleName;
     }
 
@@ -41,5 +41,11 @@ public class Role implements GrantedAuthority {
     public String getAuthority() {
         return getRoleName();
     }
+
+    @Override
+    public String toString() {
+        return roleName;
+    }
 }
+
 
