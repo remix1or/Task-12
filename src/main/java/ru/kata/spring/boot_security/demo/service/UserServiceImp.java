@@ -8,30 +8,39 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Service
-public class UserServiceImp implements UserService, UserDetailsService{
+public class UserServiceImp implements UserService, UserDetailsService {
 
     private UserDao userDao;
+    private RoleDao roleDao;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImp(UserDao userDao, @Lazy PasswordEncoder passwordEncoder) {
+    public UserServiceImp(UserDao userDao, RoleDao roleDao, @Lazy PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.roleDao = roleDao;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional
-    public void addUser(User user) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userDao.addUser(user);
+    public void addUser(User user, long[] listRoles) {
+        Set<Role> rolesSet = new HashSet<>();
+        for (long listRole : listRoles) {
+            rolesSet.add(roleDao.getRoleById(listRole));
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(rolesSet);
+        userDao.addUser(user);
     }
 
     @Override
@@ -48,15 +57,20 @@ public class UserServiceImp implements UserService, UserDetailsService{
 
     @Override
     @Transactional
-    public void updateUser(User user) {
+    public void updateUser(User user, long[] roleId) {
+        Set<Role> rolesSet = new HashSet<>();
+        for (long l : roleId) {
+            rolesSet.add(roleDao.getRoleById(l));
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(rolesSet);
         userDao.updateUser(user);
     }
 
     @Override
     @Transactional
     public void deleteUser(Long id) {
-    userDao.deleteUser(id);
+        userDao.deleteUser(id);
     }
 
     @Override
