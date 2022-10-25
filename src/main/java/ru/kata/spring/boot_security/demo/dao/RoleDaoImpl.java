@@ -3,11 +3,11 @@ package ru.kata.spring.boot_security.demo.dao;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.Role;
 
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class RoleDaoImpl implements RoleDao {
@@ -16,19 +16,9 @@ public class RoleDaoImpl implements RoleDao {
     private EntityManager entityManager;
 
     @Override
-    public Set<Role> getRoleByName(String roleName) {
-        Set<Role> roles = new HashSet<>();
-        for (Role role : getRoles()) {
-            if (roleName.contains(role.getRoleName())) {
-                roles.add(role);
-            }
-        }
-        return roles;
-    }
-    @Override
-    public List<Role> getRoles() {
-        return entityManager.createQuery("select r FROM Role r", Role.class).getResultList();
-
+    public Set<Role> getAllRoles() {
+        return entityManager.createQuery("SELECT r FROM Role r", Role.class).getResultStream()
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -36,5 +26,3 @@ public class RoleDaoImpl implements RoleDao {
         return entityManager.find(Role.class, id);
     }
 }
-
-
